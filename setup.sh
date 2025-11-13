@@ -1,76 +1,90 @@
 #!/bin/bash
 
-# ==============================================================================
-#  Web Crawler Project Environment Setup Script for WSL (Debian/Ubuntu) - V3
-# ==============================================================================
-# This script will:
-# 1. Create the project directory structure.
-# 2. Update apt and install all necessary system and Python dependencies.
-# 3. Download the nlohmann/json header for the C++ project.
-# ==============================================================================
+# A script to set up the directory structure and initial files for the
+# "Multicore Architecture Web Scraping Performance" project.
 
-# Exit immediately if a command exits with a non-zero status.
-set -e
+echo "--- Starting Project Setup ---"
 
-# Define some colors for output
-GREEN='\033[0;32m'
-YELLOW='\033[1;33m'
-NC='\033[0m' # No Color
-
-# --- 1. Create Project Directory Structure ---
-echo -e "${YELLOW}Step 1: Creating project directory structure...${NC}"
-mkdir -p WebCrawlerProject/python
-mkdir -p WebCrawlerProject/java
-mkdir -p WebCrawlerProject/cpp
-mkdir -p WebCrawlerProject/c
-mkdir -p WebCrawlerProject/javascript
-echo -e "${GREEN}Directory structure created successfully.${NC}"
-
-# --- 2. Install ALL System & Python Dependencies via APT ---
-echo -e "\n${YELLOW}Step 2: Installing all dependencies (requires sudo password)...${NC}"
-sudo apt-get update
-
-# This is one single command, with each package on a new line for readability.
-# The comment that caused the error has been removed.
-sudo apt-get install -y \
-    build-essential \
-    pkg-config \
-    default-jdk \
-    nodejs \
-    npm \
-    python3-pip \
-    python3-venv \
-    libcurl4-openssl-dev \
-    libxml2-dev \
-    libgumbo-dev \
-    libjansson-dev \
-    python3-bs4 \
-    python3-pandas \
-    python3-psutil \
-    python3-matplotlib \
-    python3-seaborn \
-    python3-tqdm
-
-echo -e "${GREEN}All dependencies installed successfully.${NC}"
-
-# --- 3. Download C++ nlohmann/json Header ---
-echo -e "\n${YELLOW}Step 3: Downloading nlohmann/json header for C++...${NC}"
-CPP_DIR="WebCrawlerProject/cpp"
-JSON_HEADER_URL="https://github.com/nlohmann/json/releases/download/v3.11.2/json.hpp"
-JSON_HEADER_PATH="$CPP_DIR/json.hpp"
-
-if [ ! -f "$JSON_HEADER_PATH" ]; then
-    wget -O "$JSON_HEADER_PATH" "$JSON_HEADER_URL"
-    echo -e "${GREEN}nlohmann/json.hpp downloaded successfully.${NC}"
+# 1. Create the main project directory
+PROJECT_ROOT="web_scraping_performance"
+if [ -d "$PROJECT_ROOT" ]; then
+    echo "Directory '$PROJECT_ROOT' already exists. Skipping creation."
 else
-    echo -e "${GREEN}nlohmann/json.hpp already exists. Skipping download.${NC}"
+    mkdir $PROJECT_ROOT
+    echo "Created root directory: $PROJECT_ROOT"
 fi
+cd $PROJECT_ROOT
 
-# --- Final Instructions ---
-echo -e "\n======================================================================"
-echo -e "${GREEN}✅ All Done! Your development environment is ready.${NC}"
-echo -e "======================================================================"
-echo -e "${YELLOW}Navigate into your project directory to get started:${NC}"
-echo -e "  cd WebCrawlerProject"
-echo -e "\n${YELLOW}Remember to run your local web server for testing.${NC}"
-echo -e "======================================================================"
+# 2. Create directories for each language and their respective models
+echo "Creating language and model directories..."
+
+# --- C ---
+mkdir -p c/single_threaded
+mkdir -p c/pthreads
+mkdir -p c/openmp
+touch c/single_threaded/scraper.c
+touch c/pthreads/scraper.c
+touch c/openmp/scraper.c
+
+# --- C++ ---
+mkdir -p cpp/single_threaded
+mkdir -p cpp/pthreads
+mkdir -p cpp/openmp
+touch cpp/single_threaded/scraper.cpp
+touch cpp/pthreads/scraper.cpp
+touch cpp/openmp/scraper.cpp
+
+# --- Java ---
+mkdir -p java/single_threaded
+mkdir -p java/multi_threaded
+touch java/single_threaded/Scraper.java
+touch java/multi_threaded/Scraper.java
+
+# --- Python ---
+mkdir -p python/single_threaded
+mkdir -p python/multi_threaded
+touch python/single_threaded/scraper.py
+touch python/multi_threaded/scraper.py
+touch python/multi_threaded/requirements.txt # For libraries like 'requests'
+
+echo "Directory structure and empty files created successfully."
+
+# 3. Create helper scripts and documentation
+echo "Creating helper files..."
+touch run_experiments.sh
+chmod +x run_experiments.sh # Make it executable
+
+# Create a README file with a basic template
+cat > README.md <<- EOM
+# Performance Analysis of Single vs. Multi-threaded Web Scraping
+
+This project compares the performance of web scraping using different languages and concurrency models.
+
+## Languages and Models
+- **C:** Single-Threaded, Pthreads, OpenMP
+- **C++:** Single-Threaded, Pthreads, OpenMP
+- **Java:** Single-Threaded, Multi-Threaded (ExecutorService)
+- **Python:** Single-Threaded, Multi-Threaded (concurrent.futures)
+
+## How to Run
+1. Install all dependencies.
+2. Compile the source code for C, C++, and Java.
+3. Use the \`run_experiments.sh\` script to execute all tests.
+EOM
+
+echo "--- Project Structure ---"
+# Display the created structure
+ls -R
+
+echo ""
+echo "--- Installation and Dependencies ---"
+echo "To compile and run this project, you need to install the necessary tools."
+echo "Please run the following commands for a Debian/Ubuntu-based system:"
+echo ""
+echo 'sudo apt-get update && sudo apt-get install -y build-essential openjdk-17-jdk python3 python3-pip libcurl4-openssl-dev'
+echo ""
+echo "For Python, you will need the 'requests' and 'beautifulsoup4' libraries:"
+echo "pip3 install requests beautifulsoup4"
+echo ""
+echo "--- Setup Complete ---"
+echo "You can now start adding your code to the created files inside the '$PROJECT_ROOT' directory."
