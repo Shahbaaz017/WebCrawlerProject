@@ -1,0 +1,9 @@
+Experiment,Average Time (s)
+C++ Single-Threaded,140.62155341900007
+C++ Pthreads,38.79956075449991
+C++ OpenMP,61.63754456700053
+C Single-Threaded,214.8970612055
+C Pthreads,36.75787492700056
+C OpenMP,28.490889633499137
+Python Single-Threaded,15.45142944249983
+Python MT (16 Threads),26.250890222000635
